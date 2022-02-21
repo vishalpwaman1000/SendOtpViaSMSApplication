@@ -38,5 +38,21 @@ namespace SendSmsApplication.Controllers
             return Ok(response);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> OTpVarification(OTpVarificationRequest request)
+        {
+            OTpVarificationResponse response = new OTpVarificationResponse();
+
+            try
+            {
+                response = await _dataAccessLayer.OTpVarification(request);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return Ok(response);
+        }
     }
 }

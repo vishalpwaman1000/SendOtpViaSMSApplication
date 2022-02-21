@@ -34,3 +34,4 @@ C:\Users\visha\source\repos\SendSmsApplication\SendSmsApplication\obj\Debug\netc
 C:\Users\visha\source\repos\SendSmsApplication\SendSmsApplication\bin\Debug\netcoreapp3.1\RestSharp.dll
 C:\Users\visha\source\repos\SendSmsApplication\SendSmsApplication\bin\Debug\netcoreapp3.1\System.Text.Json.dll
 C:\Users\visha\source\repos\SendSmsApplication\SendSmsApplication\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\visha\source\repos\SendSmsApplication\SendSmsApplication\bin\Debug\netcoreapp3.1\SqlQueries.xml

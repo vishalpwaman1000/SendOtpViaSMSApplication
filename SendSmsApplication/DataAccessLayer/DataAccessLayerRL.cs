@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using RestSharp;
 using SendSmsApplication.CommonLayer.Model;
+using SendSmsApplication.CommonUtility;
 using System;
 using System.Data.SqlClient;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace SendSmsApplication.DataAccessLayer
             try
             {
                 int NewOtp = CreateOtp(); // Create Otp
-                SmsResponse = await SendOtpFunction(NewOtp, request.MobileNumber);
+                SmsResponse = await SendOtpFunction(NewOtp, request.MobileNumber); // Send Sms
                 
                 if(!SmsResponse.IsSuccess)
                 {
@@ -40,7 +41,7 @@ namespace SendSmsApplication.DataAccessLayer
                     return response;
                 }
 
-                string StoreProcedure = "Sp_SendOtp";
+                string StoreProcedure = _configuration["StoreProcedure:SendOtpViaSms"];
                 using (SqlCommand sqlCommand = new SqlCommand(StoreProcedure, _sqlConnection))
                 {
                     sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
@@ -115,6 +116,55 @@ namespace SendSmsApplication.DataAccessLayer
             }
 
             return response1;
+        }
+
+        public async Task<OTpVarificationResponse> OTpVarification(OTpVarificationRequest request)
+        {
+            OTpVarificationResponse response = new OTpVarificationResponse();
+            response.IsSuccess = true;
+            response.Message = "Otp Varification Successful";
+            try
+            {
+
+                if(_sqlConnection.State != System.Data.ConnectionState.Open)
+                {
+                    await _sqlConnection.OpenAsync();
+                }
+
+                using (SqlCommand sqlCommand = new SqlCommand(SqlQueries.OTpVarification, _sqlConnection))
+                {
+                    sqlCommand.CommandType = System.Data.CommandType.Text;
+                    sqlCommand.CommandTimeout = 180;
+                    sqlCommand.Parameters.AddWithValue("@MobileNumber", request.MobileNumber);
+                    sqlCommand.Parameters.AddWithValue("@Otp", request.Otp);
+
+                    using(SqlDataReader sqlDataReader = await sqlCommand.ExecuteReaderAsync())
+                    {
+                        if (sqlDataReader.HasRows)
+                        {
+                            return response;
+                        }
+                        else
+                        {
+                            response.IsSuccess = false;
+                            response.Message = "Otp Verification Failed";
+                        }
+                    }
+
+                }
+
+            }catch(Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            finally
+            {
+                await _sqlConnection.CloseAsync();
+                await _sqlConnection.DisposeAsync();
+            }
+
+            return response;
         }
     }
 }

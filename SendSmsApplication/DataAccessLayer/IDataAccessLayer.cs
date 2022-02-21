@@ -9,5 +9,7 @@ namespace SendSmsApplication.DataAccessLayer
     public interface IDataAccessLayer
     {
         public Task<SendOtpSmsResponse> SendOTP(SendOtpSmsRequest request);
+
+        public Task<OTpVarificationResponse> OTpVarification(OTpVarificationRequest request);
     }
 }

@@ -12,6 +12,6 @@ namespace SendSmsApplication.CommonUtility
             .AddXmlFile("SqlQueries.xml", true, true)
             .Build();
 
-        public static string InsertOtpDetail { get { return _sqlConfiguration["InsertOtpDetail"]; } }
+        public static string OTpVarification { get { return _sqlConfiguration["OTpVarification"]; } }
     }
 }
