@@ -39,13 +39,30 @@ namespace SendSmsApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> OTpVarification(OTpVarificationRequest request)
+        public async Task<IActionResult> OtpVarification(OTpVarificationRequest request)
         {
             OTpVarificationResponse response = new OTpVarificationResponse();
 
             try
             {
                 response = await _dataAccessLayer.OTpVarification(request);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return Ok(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetMobileOtpDetail(GetMobileOtpDetailRequest request)
+        {
+            GetMobileOtpDetailResponse response = new GetMobileOtpDetailResponse();
+
+            try
+            {
+                response = await _dataAccessLayer.GetMobileOtpDetail(request);
             }
             catch (Exception ex)
             {

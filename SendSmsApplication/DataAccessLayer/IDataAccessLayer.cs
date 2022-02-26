@@ -11,5 +11,7 @@ namespace SendSmsApplication.DataAccessLayer
         public Task<SendOtpSmsResponse> SendOTP(SendOtpSmsRequest request);
 
         public Task<OTpVarificationResponse> OTpVarification(OTpVarificationRequest request);
+
+        public Task<GetMobileOtpDetailResponse> GetMobileOtpDetail(GetMobileOtpDetailRequest request);
     }
 }

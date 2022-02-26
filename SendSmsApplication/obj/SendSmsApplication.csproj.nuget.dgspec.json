@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\visha\\source\\repos\\SendSmsApplication\\SendSmsApplication\\SendSmsApplication.csproj": {}
+    "C:\\Users\\visha\\source\\repos\\SendSms\\SendSmsApplication\\SendSmsApplication\\SendSmsApplication.csproj": {}
   },
   "projects": {
-    "C:\\Users\\visha\\source\\repos\\SendSmsApplication\\SendSmsApplication\\SendSmsApplication.csproj": {
+    "C:\\Users\\visha\\source\\repos\\SendSms\\SendSmsApplication\\SendSmsApplication\\SendSmsApplication.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\visha\\source\\repos\\SendSmsApplication\\SendSmsApplication\\SendSmsApplication.csproj",
+        "projectUniqueName": "C:\\Users\\visha\\source\\repos\\SendSms\\SendSmsApplication\\SendSmsApplication\\SendSmsApplication.csproj",
         "projectName": "SendSmsApplication",
-        "projectPath": "C:\\Users\\visha\\source\\repos\\SendSmsApplication\\SendSmsApplication\\SendSmsApplication.csproj",
+        "projectPath": "C:\\Users\\visha\\source\\repos\\SendSms\\SendSmsApplication\\SendSmsApplication\\SendSmsApplication.csproj",
         "packagesPath": "C:\\Users\\visha\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\visha\\source\\repos\\SendSmsApplication\\SendSmsApplication\\obj\\",
+        "outputPath": "C:\\Users\\visha\\source\\repos\\SendSms\\SendSmsApplication\\SendSmsApplication\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\visha\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,6 +40,10 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "Microsoft.AspNetCore.Cors": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.1, )"

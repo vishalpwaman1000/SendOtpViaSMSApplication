@@ -7,4 +7,18 @@
 			WHERE MobileNumber=@MobileNumber AND Otp=@Otp
 		]]>
 	</OTpVarification>
+	<GetMobileOtpDetail>
+		<![CDATA[
+		SELECT	UserId,
+				MobileNumber,
+				OtpCount,
+				InsertionDate,
+				UpdateDate,
+				(select COUNT(*) from [SendSmsOtpDB].[dbo].[SmsOtpDetail]) as TotalRecord
+		FROM [SendSmsOtpDB].[dbo].[SmsOtpDetail]
+		ORDER BY UpdateDate DESC , InsertionDate DESC
+		OFFSET @Limit ROWS
+		FETCH NEXT @RecordPerPage ROWS ONLY;
+		]]>
+	</GetMobileOtpDetail>
 </SqlQueries>

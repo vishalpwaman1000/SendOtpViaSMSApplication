@@ -13,5 +13,6 @@ namespace SendSmsApplication.CommonUtility
             .Build();
 
         public static string OTpVarification { get { return _sqlConfiguration["OTpVarification"]; } }
+        public static string GetMobileOtpDetail { get { return _sqlConfiguration["GetMobileOtpDetail"]; } }
     }
 }

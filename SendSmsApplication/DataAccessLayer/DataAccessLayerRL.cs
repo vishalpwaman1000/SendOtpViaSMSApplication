@@ -32,14 +32,14 @@ namespace SendSmsApplication.DataAccessLayer
             try
             {
                 int NewOtp = CreateOtp(); // Create Otp
-                SmsResponse = await SendOtpFunction(NewOtp, request.MobileNumber); // Send Sms
+                /*SmsResponse = await SendOtpFunction(NewOtp, request.MobileNumber); // Send Sms
                 
                 if(!SmsResponse.IsSuccess)
                 {
                     response.IsSuccess = false;
                     response.Message = SmsResponse.message;
                     return response;
-                }
+                }*/
 
                 string StoreProcedure = _configuration["StoreProcedure:SendOtpViaSms"];
                 using (SqlCommand sqlCommand = new SqlCommand(StoreProcedure, _sqlConnection))
@@ -91,7 +91,9 @@ namespace SendSmsApplication.DataAccessLayer
         {
 
             SendOtpFunctionResponse response1 = new SendOtpFunctionResponse();
-            RestResponse response = new RestResponse();
+            response1.IsSuccess = true;
+            response1.message = "OTP Send Successfully";
+
             try
             {
                 var client = new RestClient("https://www.fast2sms.com/dev/bulkV2");
@@ -102,7 +104,7 @@ namespace SendSmsApplication.DataAccessLayer
                 request.AddParameter("variables_values", Otp.ToString());
                 request.AddParameter("route", "otp");
                 request.AddParameter("numbers", MobileNumber.ToString());
-                response = await client.ExecuteAsync(request);
+                RestResponse response = await client.ExecuteAsync(request);
                 if (response.ResponseStatus.ToString() == "Error")
                 {
                     response1.IsSuccess = false;
@@ -147,7 +149,7 @@ namespace SendSmsApplication.DataAccessLayer
                         else
                         {
                             response.IsSuccess = false;
-                            response.Message = "Otp Verification Failed";
+                            response.Message = "Otp Verification Failed. Please Enter Valid OTP.";
                         }
                     }
 
@@ -164,6 +166,74 @@ namespace SendSmsApplication.DataAccessLayer
                 await _sqlConnection.DisposeAsync();
             }
 
+            return response;
+        }
+
+        public async Task<GetMobileOtpDetailResponse> GetMobileOtpDetail(GetMobileOtpDetailRequest request)
+        {
+            GetMobileOtpDetailResponse response = new GetMobileOtpDetailResponse();
+            response.IsSuccess = true;
+            response.Message = "Successful";
+
+            try
+            {
+
+                if(_sqlConnection.State != System.Data.ConnectionState.Open)
+                {
+                    await _sqlConnection.OpenAsync();
+                }
+
+                using (SqlCommand sqlCommand = new SqlCommand(SqlQueries.GetMobileOtpDetail, _sqlConnection))
+                {
+                    sqlCommand.CommandType = System.Data.CommandType.Text;
+                    sqlCommand.CommandTimeout = 180;
+                    sqlCommand.Parameters.AddWithValue("@Limit", (request.PageNumber - 1) * request.RecordPerPage);
+                    sqlCommand.Parameters.AddWithValue("@RecordPerPage", request.RecordPerPage);
+                    using (SqlDataReader sqlDataReader = await sqlCommand.ExecuteReaderAsync())
+                    {
+                        if (sqlDataReader.HasRows)
+                        {
+                            response.getMobileOtpDetails = new System.Collections.Generic.List<GetMobileOtpDetail>();
+                            int Count = 0;
+                            while (await sqlDataReader.ReadAsync())
+                            {
+                                GetMobileOtpDetail getDetail = new GetMobileOtpDetail();
+                                getDetail.UserID = sqlDataReader["UserId"] != DBNull.Value ? Convert.ToInt32(sqlDataReader["UserId"]) : 0;
+                                getDetail.MobileNumber = sqlDataReader["MobileNumber"] != DBNull.Value ? Convert.ToString(sqlDataReader["MobileNumber"]) : string.Empty;
+                                getDetail.Date = sqlDataReader["UpdateDate"] != DBNull.Value ? Convert.ToDateTime(sqlDataReader["UpdateDate"]).ToString("dd'-'MMM'-'yyyy") : string.Empty;
+                                if (String.IsNullOrEmpty(getDetail.Date))
+                                {
+                                    getDetail.Date = sqlDataReader["InsertionDate"] != DBNull.Value ? Convert.ToDateTime(sqlDataReader["InsertionDate"]).ToString("dd'-'MMM'-'yyyy") : string.Empty;
+                                }
+                                getDetail.OtpGenerateCount = sqlDataReader["OtpCount"] != DBNull.Value ? Convert.ToInt32(sqlDataReader["OtpCount"]) : 0;
+                                if (Count == 0)
+                                {
+                                    Count++;
+                                    double TotalRecord = sqlDataReader["TotalRecord"] != DBNull.Value ? Convert.ToInt32(sqlDataReader["TotalRecord"]) : 0;
+                                    response.TotalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(TotalRecord / request.RecordPerPage)));
+                                    response.CurrentPage = request.PageNumber;
+                                }
+                                response.getMobileOtpDetails.Add(getDetail);
+                            }
+                        }
+                        else
+                        {
+                            response.IsSuccess = false;
+                            response.Message = "Record Not Found";
+                        }
+                    }
+                }
+
+            }catch(Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            finally
+            {
+                await _sqlConnection.CloseAsync();
+                await _sqlConnection.DisposeAsync();
+            }
             return response;
         }
     }
